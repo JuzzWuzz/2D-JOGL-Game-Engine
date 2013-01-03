@@ -1,4 +1,4 @@
-ENV=LD_LIBRARY_PATH="`pwd`/libs/jogl-1.1.1-linux-amd64/lib/" CLASSPATH="`pwd`/jar/2DGame_1.2.jar":"`pwd`/libs/jogl-1.1.1-linux-amd64/lib/jogl.jar":"`pwd`/libs/jogl-1.1.1-linux-amd64/lib/gluegen-rt.jar"
+ENV=LD_LIBRARY_PATH="`pwd`/libs/" CLASSPATH="`pwd`/jar/2DGame_1.2.jar":"`pwd`/libs/jogl-all.jar":"`pwd`/libs/jogl-all-natives-linux-amd64.jar":"`pwd`/libs/gluegen-rt.jar":"`pwd`/libs/gluegen-rt-natives-linux-amd64.jar"
 JAVACMD=javac
 
 bin/*.class: src/*.java

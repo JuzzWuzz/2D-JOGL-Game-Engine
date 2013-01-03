@@ -70,7 +70,7 @@ public class SurvivalGame extends Game
         //Loading up our textures
         GameTexture softRockTexture = loader.loadTexture("Textures/soft_rock.png");
         GameTexture rockTexture = loader.loadTexture("Textures/rock.png");
-        GameTexture grassTexture = loader.load("Textures/grass_tile.jpg");
+        GameTexture grassTexture = loader.loadTexture("Textures/grass_tile.jpg");
         bulletTexture = loader.loadTexture("Textures/bullet.png");
         
         
@@ -127,7 +127,7 @@ public class SurvivalGame extends Game
                              (float)(grassTexture.getHeight()*gridSize)/2f);
         
         for (int i = 0 ; i < 72 ; i++) {
-        	player.addTexture(loader.load("Textures/ship/spaceship_sm"+i+".gif"), 16, 16);
+        	player.addTexture(loader.loadTexture("Textures/ship/spaceship_sm"+i+".gif"), 16, 16);
         }
         
         objects.add(player);

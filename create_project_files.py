@@ -2,25 +2,35 @@ import sys
 
 print 'Creating project files'
 
-os = sys.argv[1]
-game_name = sys.argv[2]
+game_name = sys.argv[1]
+os = sys.argv[2]
 dest_dir = sys.argv[3]
 
-classpfile = open (dest_dir+'.classpath', 'w')
+classpfile = open (dest_dir+'/'+game_name+'_'+os+'/.classpath', 'w')
 
 classpfile.write ('\
 <?xml version="1.0" encoding="UTF-8"?> \n\
 <classpath> \n\
 	<classpathentry kind="src" path="src"/> \n\
 	<classpathentry kind="lib" path="jar/2DGame_1.2.jar"/> \n\
-	<classpathentry kind="lib" path="libs/jogl-1.1.1-'+os+'/lib/gluegen-rt.jar"> \n\
+	<classpathentry kind="lib" path="libs/gluegen-rt.jar"> \n\
 		<attributes> \n\
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs/jogl-1.1.1-'+os+'/lib"/> \n\
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
 		</attributes> \n\
 	</classpathentry> \n\
-	<classpathentry kind="lib" path="libs/jogl-1.1.1-'+os+'/lib/jogl.jar"> \n\
+	<classpathentry kind="lib" path="libs/gluegen-rt-natives-'+os+'.jar"> \n\
 		<attributes> \n\
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs/jogl-1.1.1-'+os+'/lib"/> \n\
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
+		</attributes> \n\
+	</classpathentry> \n\
+	<classpathentry kind="lib" path="libs/jogl-all.jar"> \n\
+		<attributes> \n\
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
+		</attributes> \n\
+	</classpathentry> \n\
+	<classpathentry kind="lib" path="libs/jogl-all-natives-'+os+'.jar"> \n\
+		<attributes> \n\
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
 		</attributes> \n\
 	</classpathentry> \n\
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/> \n\
@@ -30,7 +40,7 @@ classpfile.write ('\
 classpfile.close()
 
 
-profile = open (dest_dir+'.project', 'w')
+profile = open (dest_dir+'/'+game_name+'_'+os+'/.project', 'w')
 
 profile.write('\
 <?xml version="1.0" encoding="UTF-8"?> \n\
