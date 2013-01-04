@@ -1,6 +1,6 @@
 
 
-import game.GameCanvas;
+import GameEngine.GameCanvas;
 import javax.swing.*;
 
 public class Runner {

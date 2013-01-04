@@ -3,10 +3,10 @@ import java.awt.geom.*;
 import java.awt.event.*;
 import java.awt.*;
 
-import game.Game;
-import game.GameTexture;
-import game.GameFont;
-import game.GameObject;
+import GameEngine.Game;
+import GameEngine.GameTexture;
+import GameEngine.GameFont;
+import GameEngine.GameObject;
 
 
 //==================================================================================================
@@ -72,7 +72,7 @@ public class AsteroidGame extends Game
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
         background = new GameObject(0,0);
-        GameTexture backgroundTexture = loader.load("Textures/background1024.jpg");
+        GameTexture backgroundTexture = loader.loadTexture("Textures/background1024.jpg");
         background.addTexture(backgroundTexture, 0, 0);
         
         // Can also do...
@@ -86,7 +86,7 @@ public class AsteroidGame extends Game
                              (float)(background.getAABoundingBox().height)/2f,  100f);
         
         for (int i = 0 ; i < 72 ; i++) {
-            p.addTexture(loader.load("Textures/spaceship_sm"+i+".gif"), 16, 16);
+            p.addTexture(loader.loadTexture("Textures/ship/spaceship_sm"+i+".gif"), 16, 16);
         }
         
         p.setSubImage(0,0,32, 32);
@@ -113,9 +113,7 @@ public class AsteroidGame extends Game
         cooldownTimer = cooldown;
         
         float dir = p.getDirection();
-        BulletObject bullet =
-                new BulletObject(
-                         p.getPosition().x + (float)Math.sin(Math.toRadians(dir))*32, p.getPosition().y - (float)Math.cos(Math.toRadians(dir))*32, 1f, 300, bulletTexture);
+        BulletObject bullet = new BulletObject(p.getPosition().x + (float)Math.sin(Math.toRadians(dir))*32, p.getPosition().y - (float)Math.cos(Math.toRadians(dir))*32, 1f, 300, bulletTexture);
         
         bullet.setVelocity(p.getVelocity());
         bullet.applyForceInDirection(dir, 3f);
@@ -270,7 +268,7 @@ public class AsteroidGame extends Game
     	//For every object that you want to be rendered, you must call the draw function with it as a parameter
     	
     	// NOTE: Always draw transparent objects last!
-    	drawer.setOffsets(offsetx, offsety);
+    	drawer.setWorldOffset(offsetx, offsety);
         drawer.setColour(1.0f, 1.0f, 1.0f, 1.0f);
         drawer.draw(background, -1);
         
@@ -284,7 +282,7 @@ public class AsteroidGame extends Game
         
         drawer.setColour(1.0f,1.0f,1.0f,1.0f);
         
-        drawer.setOffsets(0, 0);
+        drawer.setWorldOffset(0, 0);
         // this is just a random line drawn in the corner of the screen (but not offsetted)
         drawer.draw(GameDrawer.LINES, ps, c, -0.5f);
         

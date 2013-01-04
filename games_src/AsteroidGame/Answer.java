@@ -1,13 +1,7 @@
-import java.util.Vector;
-import java.awt.geom.*;
-import java.awt.event.*;
 import java.awt.*;
 import java.nio.*;
 
-import game.Game;
-import game.GameTexture;
-import game.GameFont;
-import game.GameObject;
+import GameEngine.GameObject;
 
 public class Answer {
 

@@ -1,5 +1,4 @@
-import game.GameTexture;
-import game.PhysicalObject;
+import GameEngine.GameTexture;
 
 class PlayerObject extends PhysicalObject {
     
