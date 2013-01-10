@@ -112,8 +112,11 @@ public class PhysicalObject extends GameObject {
      *  position.y += velocity.y;
 	 * 
 	 */
-    public void doTimeStep() {
+    public void doTimeStep()
+    {
         position.x += velocity.x;
         position.y += velocity.y;
+        
+        super.doTimeStep();
     }
 }
