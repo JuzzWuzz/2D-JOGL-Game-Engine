@@ -487,6 +487,27 @@ public class GameObject
     }
     
     /**
+     * Configure animation
+     * 
+     * @param enabled Enable or disable animation
+     */
+    public void setupAnimation(boolean enabled)
+    {
+    	animate = enabled;
+    }
+    /**
+     * Configure animation
+     * 
+     * @param enabled Enable or disable animation
+     * @param animateAll Animate over the entire sprite sheet or just the specific row
+     */
+    public void setupAnimation(boolean enabled, boolean animateAll)
+    {
+    	animate = enabled;
+    	this.animateAll = animateAll;
+    }
+    
+    /**
      * Animate the image
      * 
      * This only works with a sprite sheet!

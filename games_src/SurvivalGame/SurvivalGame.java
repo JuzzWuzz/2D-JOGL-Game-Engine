@@ -95,6 +95,7 @@ public class SurvivalGame extends Game
 			go.addSpriteSheet(softRockTexture, 64, 64);
 			go.setSpriteSheetCol((int)(Math.random()*8));
 			go.setSpriteSheetRow((int)(Math.random()*8));
+			go.setupAnimation(true, true);
 			objects.add(go);
         }
         

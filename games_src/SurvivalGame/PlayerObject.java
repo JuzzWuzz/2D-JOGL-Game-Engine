@@ -6,7 +6,6 @@ import GameEngine.GameObject;
 
 class PlayerObject extends GameObject
 {
-    int numberOfDirectionTextures = 72;
     float direction;
     
     Point2D.Float oldPosition;
@@ -26,10 +25,6 @@ class PlayerObject extends GameObject
         while (direction >= 360.0) direction -= 360.0;
         
         this.direction = direction;
-        
-        // settign the correct texture
-        float offsetDirection = direction+(360.0f/numberOfDirectionTextures)/2.0f;
-        while (offsetDirection >= 360.0) offsetDirection -= 360.0;
         
         // Set the rotation to be the same as the direction value
         rotation = direction;
