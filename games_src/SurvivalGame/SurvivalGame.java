@@ -140,10 +140,7 @@ public class SurvivalGame extends Game
                              (float)(grassTexture.getWidth()*gridSize)/2f,
                              (float)(grassTexture.getHeight()*gridSize)/2f);
         
-        for (int i = 0 ; i < 72 ; i++)
-        {
-        	player.addTexture(loader.loadTexture("Textures/ship/spaceship_sm"+i+".gif"), 16, 16);
-        }
+        player.addTexture(loader.loadTexture("Textures/spaceship_sm.gif"), 16, 16);
         
         objects.add(player);
 

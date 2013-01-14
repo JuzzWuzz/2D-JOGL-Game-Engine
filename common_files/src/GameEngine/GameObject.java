@@ -1,12 +1,9 @@
 package GameEngine;
 
-
 import java.util.Vector;
 import java.awt.*;
 import java.awt.geom.*;
 import javax.media.opengl.*;
-import javax.media.opengl.awt.*;
-
 import com.jogamp.opengl.util.texture.*;
 
 /**
@@ -25,15 +22,16 @@ import com.jogamp.opengl.util.texture.*;
  * <p>
  * 
  * @author Richard Baxter
+ * @author Justin Crause
  *
  *	
  */
-public class GameObject {
-    
-    
+public class GameObject
+{
     //==============================================================================
     
-    protected Point2D.Float position; // in units
+    protected Point2D.Float position; // In pixels
+    protected float rotation = 0.0f; // In Degrees
     //protected float depth = 0;
     
     private boolean markedForDestruction = false;
@@ -45,11 +43,25 @@ public class GameObject {
     
     TextureCoords tc;
     
-    private boolean useSubImage = false;
-    private Point subImage1 = new Point(0, 0);
-    private Point subImage2 = new Point(0, 0);
-    private Point subImageOffset = new Point(0, 0);
-    private Point2D.Float imgDim = new Point2D.Float(0, 0);
+    private Point2D.Float imgDim = new Point2D.Float(0.0f, 0.0f);
+    
+    // Sprite sheet settings
+    private boolean useSpriteSheet = false;
+    private GameTexture spriteSheet;
+    private int subImageW;
+    private int subImageH;
+    private int subImageCX;
+    private int subImageCY;
+    private int spriteSheetCols;
+    private int spriteSheetRows;
+    private int spriteSheetCurCol;
+    private int spriteSheetCurRow;
+    
+    // Animation controls (Need sprite-sheet!!)
+    private boolean animate = false;
+    private boolean animateAll = true;
+    private int timerCur = 0;
+    private int timerMax = 10;
     
     //==================================================================================================
 
@@ -60,51 +72,48 @@ public class GameObject {
      * @param x Position along the x coordinate
      * @param y Position along the y coordinate
      */
-    public GameObject(float x, float y) {
+    public GameObject(float x, float y)
+    {
         position = new Point2D.Float(x, y);
-        //setDepth(d);
     }
     
-    public void finalize() {
+    public void finalize()
+    {
         while (!textures.isEmpty())
             removeTexture(0);
     }
     
-
     /**
      * Returns the angle between this GameObject and another
      *
      * @param o The GameObject to get the angle from
      * @return Then angle in degrees
      */
-    public float getDegreesTo(GameObject o) {
-    	
-    	return getDegreesTo(o.position);
+    public float getDegreesTo(GameObject o)
+    {
+    	return(getDegreesTo(o.position));
     }
     
-
     /**
      * Returns the angle between this GameObject and another
      *
      * @param o The GameObject to get the angle from
      * @return Then angle in radians
      */
-    public float getRadiansTo(GameObject o) {
-    	
-    	return getRadiansTo(o.position);
+    public float getRadiansTo(GameObject o)
+    {
+    	return(getRadiansTo(o.position));
     }
     
-
-
     /**
      * Returns the angle between this GameObject and a point
      *
      * @param o The point to get the angle from
      * @return Then angle in degrees
      */
-    public float getDegreesTo(Point2D.Float o) {
-    	
-    	return (float)Math.toDegrees(getRadiansTo(o));
+    public float getDegreesTo(Point2D.Float o)
+    {
+    	return((float)Math.toDegrees(getRadiansTo(o)));
     }
     
 
@@ -114,40 +123,18 @@ public class GameObject {
      * @param o The point to get the angle from
      * @return Then angle in radians
      */
-    public float getRadiansTo(Point2D.Float o) {
-    	
-    	return (float)Math.atan2((o.y - position.y),(o.x - position.x));
+    public float getRadiansTo(Point2D.Float o)
+    {
+    	return((float)Math.atan2((o.y - position.y),(o.x - position.x)));
     }
     
-    //==================================================================================================
-
-    /**
-     * Sets the depth of this object, a lower number means it will be behind other objects
-     *
-     * @param d Depth of this object
-     */
-    /*public void setDepth(float d) {
-        depth = d;
-        if (depth < -1) depth = -1;
-        if (depth > 1) depth = 1;
-    }*/
-    
-    /**
-     * Gets the depth of this object
-     *
-     * @return Depth of this object
-     */
-    /*public float getDepth() {
-        return depth;
-    }*/
-    //--------------------------------------------
-
     /**
      * Sets the position of the object. Objects will be drawn with their center at this position
      *
      * @param p Position of the object
      */
-    public void setPosition(Point2D.Float p) {
+    public void setPosition(Point2D.Float p)
+    {
         position.x = p.x;
         position.y = p.y;
     }
@@ -158,7 +145,8 @@ public class GameObject {
      * @param x x position of the object
      * @param y y position of the object
      */
-    public void setPosition(float x, float y) {
+    public void setPosition(float x, float y)
+    {
         position.x = x;
         position.y = y;
     }
@@ -168,7 +156,8 @@ public class GameObject {
      *
      * @param p Position of the object
      */
-    public void incrementPosition(Point2D.Float p) {
+    public void incrementPosition(Point2D.Float p)
+    {
         position.x += p.x;
         position.y += p.y;
     }
@@ -179,7 +168,8 @@ public class GameObject {
      * @param x x position of the object
      * @param y y position of the object
      */
-    public void incrementPosition(float x, float y) {
+    public void incrementPosition(float x, float y)
+    {
         position.x += x;
         position.y += y;
     }
@@ -189,9 +179,21 @@ public class GameObject {
      *
      * @return Depth of this object
      */
-    public Point2D.Float getPosition() {
-        return new Point2D.Float(position.x, position.y);
+    public Point2D.Float getPosition()
+    {
+        return(new Point2D.Float(position.x, position.y));
     }
+    
+    /**
+     * Sets the rotation of the object
+     * 
+     * @param angle The angle of rotation in degrees
+     */
+    public void setRotation(float angle)
+    {
+    	rotation = angle;
+    }
+    
     //--------------------------------------------
     
     /**
@@ -199,8 +201,9 @@ public class GameObject {
      *
      * @return Axis-Aligned Bounding Box
      */
-    public Rectangle2D.Float getAABoundingBox() {
-        return new Rectangle2D.Float(position.x - getCurrentCenter().x, position.y - getCurrentCenter().y, imgDim.x, imgDim.y);
+    public Rectangle2D.Float getAABoundingBox()
+    {
+        return(new Rectangle2D.Float(position.x - getCurrentCenter().x, position.y - getCurrentCenter().y, imgDim.x, imgDim.y));
     }
     
     /**
@@ -208,16 +211,29 @@ public class GameObject {
      *
      * @return Integer Valued Axis-Aligned Bounding Box
      */
-     public Rectangle getIntAABoundingBox() {
-        return new Rectangle((int)(position.x - getCurrentCenter().x), (int)(position.y - getCurrentCenter().y), (int)imgDim.x, (int)imgDim.y);
+     public Rectangle getIntAABoundingBox()
+     {
+        return(new Rectangle((int)(position.x - getCurrentCenter().x), (int)(position.y - getCurrentCenter().y), (int)imgDim.x, (int)imgDim.y));
      }
     
-    private Point2D.Float getCurrentCenter() {
-        return centers.elementAt(activeTexture);
+    private Point2D.Float getCurrentCenter()
+    {
+    	if (useSpriteSheet)
+    	{
+    		return(new Point2D.Float(subImageCX, subImageCY));
+    	}
+    	else
+    	{
+    		return(centers.elementAt(activeTexture));
+    	}
     }
     
-    public GameTexture getCurrentTexture() {
-        return textures.elementAt(activeTexture);
+    public GameTexture getCurrentTexture()
+    {
+    	if (useSpriteSheet)
+    		return(spriteSheet);
+    	else
+    		return(textures.elementAt(activeTexture));
     }
     
     //==================================================================================================
@@ -227,7 +243,8 @@ public class GameObject {
      *
      * @param m Boolean value marking whether it should be destroyed (true, means is should be destroyed)
      */
-    public void setMarkedForDestruction (boolean m) {
+    public void setMarkedForDestruction(boolean m)
+    {
         markedForDestruction = m;
     }
     
@@ -236,7 +253,8 @@ public class GameObject {
      *
      * @return Boolean value marking whether it should be destroyed
      */
-    public boolean isMarkedForDestruction () {
+    public boolean isMarkedForDestruction()
+    {
         return markedForDestruction;
     }
     
@@ -247,8 +265,9 @@ public class GameObject {
      * 
      * @param t The GameTexture containing the image
      */
-    public void addTexture(GameTexture t) {
-        addTexture(t, (t.w+1)/2, (t.h+1)/2);
+    public void addTexture(GameTexture t)
+    {
+        addTexture(t, (t.w + 1) / 2, (t.h + 1) / 2);
     }
     
     /**
@@ -260,14 +279,13 @@ public class GameObject {
      * @param centerX The center of the image in the x direction relative to the image
      * @param centerY The center of the image in the y direction relative to the image
      */
-    public void addTexture(GameTexture t, float centerX, float centerY) {
+    public void addTexture(GameTexture t, float centerX, float centerY)
+    {
         textures.add(t);
         centers.add(new Point2D.Float(centerX, centerY));
         
         if (textures.size() == 1) // i.e. textures was empty before calling
             setActiveTexture(0);
-        
-        
     }
     
     /**
@@ -275,7 +293,8 @@ public class GameObject {
      * 
      * @param index index of the texture to remove
      */
-    public void removeTexture(int index) {
+    public void removeTexture(int index)
+    {
         textures.remove(index);
         centers.remove(index);
         
@@ -288,7 +307,8 @@ public class GameObject {
      * 
      * @return Number of textures
      */
-    public int getNumberOfTextures() {
+    public int getNumberOfTextures()
+    {
         return textures.size();
     }
     
@@ -299,8 +319,10 @@ public class GameObject {
     * 
     * @param i The index of which texture should be set to as active
     */
-    public void setActiveTexture(int i) {
-        if (textures.size() == 0){
+    public void setActiveTexture(int i)
+    {
+        if (textures.size() == 0)
+        {
             activeTexture = -1;
             return;
         }
@@ -314,117 +336,139 @@ public class GameObject {
      * 
      * @return The index of the active texture
      */
-    public int getActiveTexture() {
+    public int getActiveTexture()
+    {
         return activeTexture;
     }
     
     //==================================================================================================
     
     /**
-     * Sets the coordinates of the sub-image and its center that will be drawn during the render stage of the game loop
+     * Add sprite sheet
      * 
-     * @param x The x coordinate of the subimage relative to the image
-     * @param y The y coordinate of the subimage relative to the image
-     * @param w The width of the subimage
-     * @param h The height of the subimage
-     * @param cx The x coordinate of the center of the sub-image relative to the sub-image (not relative to the image)
-     * @param cy The y coordinate of the center of the sub-image relative to the sub-image (not relative to the image)
+     * @param t The GameTexture containing the image
+     * @param subW The width of the subimage to use. Used to determine number of columns automatically
+     * @param subH The height of the subimage to use. Used to determine number of columns automatically
+     * 
      */
-    public void setSubImage(int x, int y, int w, int h, int cx, int cy){
-        getCurrentCenter().x = cx;
-        getCurrentCenter().y = cy;
-        setSubImage(x, y, w, h);
+    public void addSpriteSheet(GameTexture t, int subW, int subH)
+    {
+    	// We are now using a sprite sheet
+    	useSpriteSheet = true;
+    	
+    	// Set the sprite sheet
+    	spriteSheet = t;
+    	
+    	// Store the sizes of the 
+    	subImageW = subW;
+    	subImageH = subH;
+    	
+    	// Store the center pos
+    	subImageCX = subImageW / 2;
+    	subImageCY = subImageH / 2;
+    	
+    	// Calculate the rows and cols (-1 beccause
+    	spriteSheetCols = (spriteSheet.w / subImageW) - 1;
+    	spriteSheetRows = (spriteSheet.h / subImageH) - 1;
+    	
+    	// Setup tex coords
+    	setTextureCoords();
     }
     
     /**
-     * Returns the position of the sub-image relative to the whole image, returns 0,0 if no sub-images is being used.
+     * Set the column index in the sprite sheet to use
      * 
-     * @return position of the sub-image relative to the whole image
+     * @param col The column index to change to in the sprite sheet
+     * 
      */
-    public Point getSubImageOffset() {
-        return new Point (subImageOffset.x, subImageOffset.y);
+    public void setSpriteSheetCol(int col)
+    {
+    	if (!useSpriteSheet)
+    		return;
+    	
+    	spriteSheetCurCol = col % spriteSheetCols;
+    	if (spriteSheetCurCol < 0)
+    		spriteSheetCurCol = 0;
+    	
+    	// Setup tex coords
+    	setTextureCoords();
+    }
+    /**
+     * Set the row index in the sprite sheet to use
+     * 
+     * @param row The row index to change to in the sprite sheet
+     * 
+     */
+    public void setSpriteSheetRow(int row)
+    {
+    	if (!useSpriteSheet)
+    		return;
+    	
+    	spriteSheetCurRow = row % spriteSheetRows;
+    	if (spriteSheetCurRow < 0)
+    		spriteSheetCurRow = 0;
+    	
+    	// Setup tex coords
+    	setTextureCoords();
     }
     
     /**
-     * Sets the coordinates of the sub-image that will be drawn during the render stage of the game loop. The center of the sub-image remains unchanged
-     * 
-     * @param x The x coordinate of the subimage relative to the image
-     * @param y The y coordinate of the subimage relative to the image
-     * @param w The width of the subimage
-     * @param h The height of the subimage
+     * Sets the texture coords
      */
-    public void setSubImage(int x, int y, int w, int h){
-        subImageOffset.x = x;
-        subImageOffset.y = y;
-        subImage1.x = x*getCurrentTexture().t.getWidth()/getCurrentTexture().w;
-        subImage1.y = y*getCurrentTexture().t.getHeight()/getCurrentTexture().h;
-        subImage2.x = (x+w)*getCurrentTexture().t.getWidth()/getCurrentTexture().w;
-        subImage2.y = (y+h)*getCurrentTexture().t.getHeight()/getCurrentTexture().h;
-        useSubImage = true;
-        setTextureCoords();
-    }
-    
-    /**
-     * Turns off the use of subimages. The whole texture will be drawn during the render stage of the game. This is the default behaviour.
-     */
-    public void disableSubImage() {
-        subImageOffset.x = 0;
-        subImageOffset.y = 0;
-        useSubImage = false;
-        setTextureCoords();
-    }
-    
-    private void setTextureCoords() {
-            
-        if (useSubImage) {
-            tc = getCurrentTexture().t.getSubImageTexCoords(subImage1.x, subImage1.y, subImage2.x, subImage2.y) ;
-            
-            imgDim.x = (subImage2.x  - subImage1.x) * getCurrentTexture().w / getCurrentTexture().t.getWidth();
-            imgDim.y = (subImage2.y  - subImage1.y) * getCurrentTexture().h / getCurrentTexture().t.getHeight();
-        }
-        else {
-            tc = getCurrentTexture().t.getImageTexCoords() ;
+    private void setTextureCoords()
+    {
+    	if (useSpriteSheet)
+    	{
+    		int x = spriteSheetCurCol * subImageW;
+    		int y = spriteSheet.h - ((spriteSheetCurRow + 1) * subImageH);
+    		tc = spriteSheet.t.getSubImageTexCoords(x, y, x + subImageW, y + subImageH);
+    		
+    		imgDim.x = subImageW;
+    		imgDim.y = subImageH;
+    	}
+        else
+        {
+            tc = getCurrentTexture().t.getImageTexCoords();
             
             imgDim.x = getCurrentTexture().w;
             imgDim.y = getCurrentTexture().h;
         }
-            
-//         System.out.println("WTF\t"+tc.left()+"\t"+tc.right()+"\t"+tc.top()+"\t"+tc.bottom()+"\t:\t"+imgDim.x+" : "+imgDim.y); 
-//         System.out.println("---\t"+getCurrentTexture().t.getWidth() +":"+getCurrentTexture().t.getHeight()+"\t"+getCurrentTexture().w +":"+getCurrentTexture().h);
-
     }
     //==================================================================================================
 
-    void draw(GL gl, float offsetx, float offsety, float r, float g, float b, float a,  float depth) {
-
-        gl.getGL2().glColor4f( r, g, b, a );
-        if (activeTexture != -1) {
+    void draw(GL gl, float offsetx, float offsety, float r, float g, float b, float a, float depth)
+    {
+        gl.getGL2().glColor4f(r, g, b, a);
+        if (activeTexture != -1 | useSpriteSheet)
+        {
+            internalDraw (gl, offsetx, offsety, depth);
+        }
+    }
+    void draw(GL gl, float offsetx, float offsety, float depth)
+    {
+        if (activeTexture != -1 | useSpriteSheet)
+        {
             internalDraw (gl, offsetx, offsety, depth);
         }
     }
     
-    void draw(GL gl, float offsetx, float offsety, float depth) {
-        
-        if (activeTexture != -1) {
-            internalDraw (gl, offsetx, offsety, depth);
-        }
-    }
-    
-    private void internalDraw (GL gl, float offsetx, float offsety, float depth) {
+    private void internalDraw (GL gl, float offsetx, float offsety, float depth)
+    {
     	 gl.getGL2().glPushMatrix();
-         gl.getGL2().glTranslatef(offsetx,offsety, 0);
-         gl.getGL2().glTranslatef(position.x,position.y, 0);
-         gl.getGL2().glTranslatef(-getCurrentCenter().x,-getCurrentCenter().y, 0);
-         
+    	 
+         gl.getGL2().glTranslatef(offsetx, offsety, 0);
+         gl.getGL2().glTranslatef(position.x, position.y, 0);
+         gl.getGL2().glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+         gl.getGL2().glTranslatef(-getCurrentCenter().x, -getCurrentCenter().y, 0);
          getCurrentTexture().t.enable(gl);
          getCurrentTexture().t.bind(gl);
          
          gl.getGL2().glBegin(GL2.GL_QUADS);
          {
-             gl.getGL2().glTexCoord2f(tc.left(),  tc.bottom());  gl.getGL2().glVertex3f(0,        0,        depth);
-             gl.getGL2().glTexCoord2f(tc.right(), tc.bottom());  gl.getGL2().glVertex3f(imgDim.x, 0,        depth);
-             gl.getGL2().glTexCoord2f(tc.right(), tc.top());     gl.getGL2().glVertex3f(imgDim.x, imgDim.y, depth);
-             gl.getGL2().glTexCoord2f(tc.left(),  tc.top());     gl.getGL2().glVertex3f(0,        imgDim.y, depth);
+             gl.getGL2().glTexCoord2f(tc.left(),	tc.bottom());	gl.getGL2().glVertex3f(0,			0,			depth);
+             gl.getGL2().glTexCoord2f(tc.right(),	tc.bottom());	gl.getGL2().glVertex3f(imgDim.x,	0,			depth);
+             gl.getGL2().glTexCoord2f(tc.right(),	tc.top());		gl.getGL2().glVertex3f(imgDim.x,	imgDim.y,	depth);
+             gl.getGL2().glTexCoord2f(tc.left(),	tc.top());		gl.getGL2().glVertex3f(0,			imgDim.y,	depth);
          }
          gl.getGL2().glEnd();
          getCurrentTexture().t.disable(gl);
@@ -433,10 +477,50 @@ public class GameObject {
     }
     
     //==================================================================================================
-    
+   
     /**
      * This should be called once per object per frame and should be over-ridden for more specific behaviour
      */
-    public void doTimeStep() {
+    public void doTimeStep()
+    {
+    	animate();
+    }
+    
+    /**
+     * Animate the image
+     * 
+     * This only works with a sprite sheet!
+     * You can either animate over a specific row or entire sheet (Left -> Right) and (Top -> Bottom)
+     * 
+     */
+    public void animate()
+    {
+    	// Make sure using sprite sheet and animation is enabled
+    	if (!useSpriteSheet | !animate)
+    		return;
+    	
+    	// Timing controls
+    	timerCur = (timerCur + 1) % timerMax;
+    	if (timerCur != 0)
+    		return;
+    	
+    	// Increment the current column
+    	spriteSheetCurCol++;
+    	
+		if (spriteSheetCurCol > spriteSheetCols)
+		{
+			spriteSheetCurCol = 0;
+			if (animateAll)
+			{
+				spriteSheetCurRow++;
+				if (spriteSheetCurRow > spriteSheetRows)
+				{
+					spriteSheetCurRow = 0;
+				}
+			}
+		}
+		
+		// Setup tex coords
+    	setTextureCoords();
     }
 }
