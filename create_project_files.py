@@ -33,6 +33,16 @@ classpfile.write ('\
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
 		</attributes> \n\
 	</classpathentry> \n\
+	<classpathentry kind="lib" path="libs/joal.jar"> \n\
+		<attributes> \n\
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
+		</attributes> \n\
+	</classpathentry> \n\
+	<classpathentry kind="lib" path="libs/joal-natives-'+os+'.jar"> \n\
+		<attributes> \n\
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
+		</attributes> \n\
+	</classpathentry> \n\
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/> \n\
 	<classpathentry kind="output" path="bin"/> \n\
 </classpath>')

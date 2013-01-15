@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.*;
 
 import GameEngine.Game;
+import GameEngine.GameAudio;
 import GameEngine.GameTexture;
 import GameEngine.GameFont;
 import GameEngine.GameObject;
@@ -53,6 +54,38 @@ public class SurvivalGame extends Game
     // Variable to keep track of the background / world size
     private Point2D.Float worldSize;
     
+    // Name your audio cues here and set the paths the files are located!!
+    // Make sure the enum and paths match!
+ 	enum AudioFiles
+ 	{
+ 		// ***************************************
+ 		// Add items and define their index here!!
+ 		// Index must increment else you will be screwed
+ 		// ***************************************
+ 			AudioGun(0),
+ 			Laser(1),
+ 			Explosion(2);
+ 		// ***************************************
+ 		
+ 		
+ 		// DO NOT MODIFY THIS!!
+ 	    private final int index; 
+ 		AudioFiles(int index)
+ 		{
+ 	        this.index = index;
+ 	    }
+ 	    public int index()
+ 	    { 
+ 	        return(index); 
+ 	    }
+ 	}
+ 	private String[] AudioPaths =
+ 	{
+ 		"Audio/gun.wav",
+ 		"Audio/laser.wav",
+ 		"Audio/explosion.wav"
+ 	};
+    
     //==================================================================================================
     
     public SurvivalGame (int GFPS)
@@ -64,14 +97,19 @@ public class SurvivalGame extends Game
     
     public void initStep(ResourceLoader loader)
     {
-        //Loading up some fonts
+    	// Add the Audio paths
+		for (int i = 0; i < AudioPaths.length; i++)
+			gameAudio.AddNewAudioFile(AudioPaths[i]);
+		// Initialise the audio engine
+		gameAudio.Initialise();
+		
+        // Loading up some fonts
         arial = loader.loadFont(new Font("Arial", Font.ITALIC, 48));
         serif = loader.loadFont(new Font("Serif", Font.PLAIN, 48));
         
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         
-
-        //Loading up our textures
+        // Loading up our textures
         GameTexture softRockTexture = loader.loadTexture("Textures/asteroid.png");
         GameTexture rockTexture = loader.loadTexture("Textures/soft_rock.png");
         GameTexture grassTexture = loader.loadTexture("Textures/grass_tile.jpg");
@@ -85,7 +123,7 @@ public class SurvivalGame extends Game
         worldSize = new Point2D.Float(gridSize * grassTexture.getWidth(), gridSize * grassTexture.getHeight());
         
         
-        // creating some random rocks to shoot
+        // Creating some random rocks to shoot
         for (int i = 0 ; i < 8 ; i++)
         {
         	float x = (float) ((Math.random()*(gridSize-4)+2)*grassTexture.getWidth());
@@ -164,6 +202,9 @@ public class SurvivalGame extends Game
         bullet.applyForceInDirection(dir, 6f);
         
         objects.add(bullet);
+        
+        // Play the gun sound
+        gameAudio.PlayAudioIndex(AudioFiles.Laser.index);
     }
     
     public static boolean isPointInBox(final Point2D.Float point, final Rectangle2D.Float box)
@@ -192,32 +233,32 @@ public class SurvivalGame extends Game
         boolean move = false;
         float directionToMove = 0;
         
-        if(gii.keyDown(KeyEvent.VK_UP))
+        if(gii.keyDown(KeyEvent.VK_W))
         {
         	move = true;
-            if(gii.keyDown(KeyEvent.VK_LEFT) && !gii.keyDown(KeyEvent.VK_RIGHT))
+            if(gii.keyDown(KeyEvent.VK_A) && !gii.keyDown(KeyEvent.VK_D))
             	directionToMove = 225;
-            else if(gii.keyDown(KeyEvent.VK_RIGHT) && !gii.keyDown(KeyEvent.VK_LEFT))
+            else if(gii.keyDown(KeyEvent.VK_D) && !gii.keyDown(KeyEvent.VK_A))
             	directionToMove = 135;
             else
             	directionToMove = 180;
         }
-        else if(gii.keyDown(KeyEvent.VK_DOWN))
+        else if(gii.keyDown(KeyEvent.VK_S))
         {
         	move = true;
-            if(gii.keyDown(KeyEvent.VK_LEFT) && !gii.keyDown(KeyEvent.VK_RIGHT))
+            if(gii.keyDown(KeyEvent.VK_A) && !gii.keyDown(KeyEvent.VK_D))
             	directionToMove = -45;
-            else if(gii.keyDown(KeyEvent.VK_RIGHT) && !gii.keyDown(KeyEvent.VK_LEFT))
+            else if(gii.keyDown(KeyEvent.VK_D) && !gii.keyDown(KeyEvent.VK_A))
             	directionToMove = 45;
             else
             	directionToMove = 0;
         }
-        else if(gii.keyDown(KeyEvent.VK_LEFT) && !gii.keyDown(KeyEvent.VK_RIGHT))
+        else if(gii.keyDown(KeyEvent.VK_A) && !gii.keyDown(KeyEvent.VK_D))
         {
         	move = true;
         	directionToMove = 270;
         }
-        else if(gii.keyDown(KeyEvent.VK_RIGHT) && !gii.keyDown(KeyEvent.VK_LEFT))
+        else if(gii.keyDown(KeyEvent.VK_D) && !gii.keyDown(KeyEvent.VK_A))
         {
         	move = true;
         	directionToMove = 90;
@@ -311,6 +352,9 @@ public class SurvivalGame extends Game
                 		o1.setMarkedForDestruction(true);
                 		o2.setMarkedForDestruction(true);
                 		
+                		// Play the explosion sound as something blew up (EXAMPLE)
+                        gameAudio.PlayAudioIndex(AudioFiles.Explosion.index);
+                		
                 		// Note: you can also implement something like o1.reduceHealth(5); if you don't want the object to be immediatly destroyed
                 	}
                 }
@@ -360,7 +404,7 @@ public class SurvivalGame extends Game
         	}
         }
         
-        // drawing all the objects in the game
+        // Drawing all the objects in the game
         for (GameObject o: objects)
         {
         	drawer.draw(o, 1.0f, 1.0f, 1.0f, 1.0f, 0);

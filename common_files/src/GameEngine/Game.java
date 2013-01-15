@@ -55,6 +55,8 @@ public abstract class Game
 	private boolean initialised;
 	private GameTimer timer;
 	
+	protected GameAudio gameAudio;
+	
 	GameRenderer.FontRenderer fr;
 	GameInputInterface theGamesInputInterface = new GameInputInterface();
 	
@@ -100,6 +102,7 @@ public abstract class Game
 	void startGame(GLAutoDrawable glc)
 	{
 		timer = new GameTimer(this, glc);
+		gameAudio = new GameAudio();
 	}
 	
 	/**
@@ -109,6 +112,7 @@ public abstract class Game
 	public void endGame()
 	{
 		timer.endGame();
+		gameAudio.KillAllData();
 	}
 	
 	//==============================================================================
