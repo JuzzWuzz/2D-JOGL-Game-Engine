@@ -851,7 +851,7 @@ public abstract class Game
 		mouseDragged = true;
 	}
 	
-	synchronized void registerMouseMoved
+	synchronized void registerMouseMoved()
 	{
 		mouseMoved = true;
 	}
