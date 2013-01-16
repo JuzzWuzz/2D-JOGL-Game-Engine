@@ -1,4 +1,4 @@
-LIBCLASSFILES="`pwd`/../OS_specific_files/linux-i586/libs/jogl-all.jar":"`pwd`/../OS_specific_files/linux-i586/libs/jogl-all-natives-linux-i586.jar":"`pwd`/../OS_specific_files/linux-i586/libs/gluegen-rt.jar":"`pwd`/../OS_specific_files/linux-i586/libs/gluegen-rt-natives-linux-i586.jar"
+LIBCLASSFILES="`pwd`/../OS_specific_files/linux-i586/libs/jogl-all.jar":"`pwd`/../OS_specific_files/linux-i586/libs/jogl-all-natives-linux-i586.jar":"`pwd`/../OS_specific_files/linux-i586/libs/gluegen-rt.jar":"`pwd`/../OS_specific_files/linux-i586/libs/gluegen-rt-natives-linux-i586.jar":"`pwd`/../OS_specific_files/linux-i586/libs/joal.jar":"`pwd`/../OS_specific_files/linux-i586/libs/joal-natives-linux-i586.jar"
 ENV=LD_LIBRARY_PATH="`pwd`/../OS_specific_files/linux-i586/libs/" CLASSPATH="`pwd`/jar/2DGame_1.2.jar":$(LIBCLASSFILES)
 JAVACMD=javac
 

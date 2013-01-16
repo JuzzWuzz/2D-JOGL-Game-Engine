@@ -203,7 +203,7 @@ public class SurvivalGame extends Game
         
         objects.add(bullet);
         
-        // Play the gun sound
+        // Play the laser sound
         gameAudio.PlayAudioIndex(AudioFiles.Laser.index);
     }
     
