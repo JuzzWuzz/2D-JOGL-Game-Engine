@@ -1,14 +1,14 @@
-LIBCLASSFILES="`pwd`/../OS_specific_files/linux-i586/libs/jogl-all.jar":"`pwd`/../OS_specific_files/linux-i586/libs/jogl-all-natives-linux-i586.jar":"`pwd`/../OS_specific_files/linux-i586/libs/gluegen-rt.jar":"`pwd`/../OS_specific_files/linux-i586/libs/gluegen-rt-natives-linux-i586.jar":"`pwd`/../OS_specific_files/linux-i586/libs/joal.jar":"`pwd`/../OS_specific_files/linux-i586/libs/joal-natives-linux-i586.jar"
-ENV=LD_LIBRARY_PATH="`pwd`/../OS_specific_files/linux-i586/libs/" CLASSPATH="`pwd`/jar/2DGame_1.2.jar":$(LIBCLASSFILES)
+PLATFORM=i586
+GAMEENGINE=2DGame_2.0.jar
+LIBCLASSFILES="`pwd`/../OS_specific_files/linux-$(PLATFORM)/libs/jogl-all.jar":"`pwd`/../OS_specific_files/linux-$(PLATFORM)/libs/jogl-all-natives-linux-$(PLATFORM).jar":"`pwd`/../OS_specific_files/linux-$(PLATFORM)/libs/gluegen-rt.jar":"`pwd`/../OS_specific_files/linux-$(PLATFORM)/libs/gluegen-rt-natives-linux-$(PLATFORM).jar":"`pwd`/../OS_specific_files/linux-$(PLATFORM)/libs/joal.jar":"`pwd`/../OS_specific_files/linux-$(PLATFORM)/libs/joal-natives-linux-$(PLATFORM).jar"
+ENV=LD_LIBRARY_PATH="`pwd`/../OS_specific_files/linux-$(PLATFORM)/libs/" CLASSPATH="`pwd`/jar/$(GAMEENGINE)":$(LIBCLASSFILES)
 JAVACMD=javac
-
-JAR_FILE=2DGame_1.2.jar
 
 all: jar docs
 
 jar: bytecode
-	cd src && jar cf $(JAR_FILE) GameEngine/*.class && cd .. || cd ..
-	mkdir jar ; mv src/$(JAR_FILE) jar/$(JAR_FILE)
+	cd src && jar cf $(GAMEENGINE) GameEngine/*.class && cd .. || cd ..
+	mkdir jar ; mv src/$(GAMEENGINE) jar/$(GAMEENGINE)
 	#$(ENV) $(JAVACMD) src/*.java
 	
 docs:
