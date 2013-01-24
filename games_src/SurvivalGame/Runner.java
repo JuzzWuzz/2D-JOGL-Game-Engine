@@ -20,6 +20,4 @@ public class Runner {
         // need this so that you don't have to click on the window to gain focus ;)
         glc.requestFocusInWindow();
     }
-    
-    
 }

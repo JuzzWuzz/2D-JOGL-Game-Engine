@@ -42,6 +42,8 @@ public class GameObject
 {
 	protected Point2D.Float position; // In pixels
 	protected float rotation = 0.0f; // In Degrees
+	protected boolean reflectX = false;
+	protected boolean reflectY = false;
 	//protected float depth = 0;
 	
 	private boolean markedForDestruction = false;
@@ -208,6 +210,28 @@ public class GameObject
 	public void setRotation(float angle)
 	{
 		rotation = angle;
+	}
+
+	//==============================================================================
+	
+	/**
+	 * Reflect the sprite in the X (Horizontal) direction
+	 * 
+	 *  @param enable Enable X reflection
+	 */
+	public void reflectX(boolean enable)
+	{
+		reflectX = enable;
+	}
+	
+	/**
+	 * Reflect the sprite in the Y (Vertical) direction
+	 * 
+	 *  @param enable Enable Y reflection
+	 */
+	public void reflectY(boolean enable)
+	{
+		reflectY = enable;
 	}
 	
 	//==============================================================================
@@ -513,12 +537,27 @@ public class GameObject
 		 getCurrentTexture().t.enable(gl);
 		 getCurrentTexture().t.bind(gl);
 		 
+		 float tc_lft = tc.left();
+		 float tc_rgt = tc.right();
+		 float tc_top = tc.top();
+		 float tc_bot = tc.bottom();
+		 if (reflectX)
+		 {
+			 tc_lft = tc.right();
+			 tc_rgt = tc.left();
+		 }
+		 if (reflectY)
+		 {
+			 tc_top = tc.bottom();
+			 tc_bot = tc.top();
+		 }
+		 
 		 gl.getGL2().glBegin(GL2.GL_QUADS);
 		 {
-			 gl.getGL2().glTexCoord2f(tc.left(),	tc.bottom());	gl.getGL2().glVertex3f(0,			0,			depth);
-			 gl.getGL2().glTexCoord2f(tc.right(),	tc.bottom());	gl.getGL2().glVertex3f(imgDim.x,	0,			depth);
-			 gl.getGL2().glTexCoord2f(tc.right(),	tc.top());		gl.getGL2().glVertex3f(imgDim.x,	imgDim.y,	depth);
-			 gl.getGL2().glTexCoord2f(tc.left(),	tc.top());		gl.getGL2().glVertex3f(0,			imgDim.y,	depth);
+			 gl.getGL2().glTexCoord2f(tc_lft, tc_bot); gl.getGL2().glVertex3f(0,		0,			depth);
+			 gl.getGL2().glTexCoord2f(tc_rgt, tc_bot); gl.getGL2().glVertex3f(imgDim.x,	0,			depth);
+			 gl.getGL2().glTexCoord2f(tc_rgt, tc_top); gl.getGL2().glVertex3f(imgDim.x,	imgDim.y,	depth);
+			 gl.getGL2().glTexCoord2f(tc_lft, tc_top); gl.getGL2().glVertex3f(0,		imgDim.y,	depth);
 		 }
 		 gl.getGL2().glEnd();
 		 getCurrentTexture().t.disable(gl);
@@ -557,6 +596,16 @@ public class GameObject
 	{
 		animate = enabled;
 		this.animateAll = animateAll;
+	}
+	
+	/**
+	 * Set the animation update time step
+	 * 
+	 * @param updateRate How many frames must pass before the animation step increments. The default is 10.
+	 */
+	public void setAnimationUpdate(int updateRate)
+	{
+		timerMax = updateRate;
 	}
 	
 	/**
