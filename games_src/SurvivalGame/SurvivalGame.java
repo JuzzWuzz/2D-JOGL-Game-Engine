@@ -136,6 +136,30 @@ public class SurvivalGame extends Game
 			objects.add(go);
         }
         
+        // Add the special item
+        GameTexture gtSpec = loader.loadTexture("Textures/Special.png");
+        GameObject goSpec = new GameObject(300, 500);
+        goSpec.addTexture(gtSpec);
+        goSpec.setCollidable(false);
+        objects.add(goSpec);
+        GameObject goSpec2 = new GameObject(450, 500);
+        goSpec2.addTexture(gtSpec);
+        goSpec2.setCollidable(false);
+        goSpec2.reflectX(true);
+        objects.add(goSpec2);
+        GameObject goSpec3 = new GameObject(600, 500);
+        goSpec3.addTexture(gtSpec);
+        goSpec3.setCollidable(false);
+        goSpec3.reflectY(true);
+        objects.add(goSpec3);
+        GameObject goSpec4 = new GameObject(750, 500);
+        goSpec4.addTexture(gtSpec);
+        goSpec4.setCollidable(false);
+        goSpec4.reflectX(true);
+        goSpec4.reflectY(true);
+        goSpec4.setRotation(180.0f);
+        objects.add(goSpec4);
+        
         
         // creating the floor objects
         gridTile = new GameObject[gridSize][gridSize];
@@ -322,10 +346,16 @@ public class SurvivalGame extends Game
         for (int i = 0 ; i < objects.size() ; i++)
         {
         	GameObject o1 = objects.elementAt(i);
+        	// If this item is marked as not collidable then skip it
+        	if (!o1.getCollidable())
+        		continue;
         	
             for (int j = i+1 ; j < objects.size() ; j++)
             {
             	GameObject o2 = objects.elementAt(j);
+            	// If this item is marked as not collidable then skip it
+            	if (!o2.getCollidable())
+            		continue;
             	
                 if (boxIntersectBox(o1.getAABoundingBox(), o2.getAABoundingBox()))
                 {
