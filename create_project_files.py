@@ -12,7 +12,7 @@ classpfile.write ('\
 <?xml version="1.0" encoding="UTF-8"?> \n\
 <classpath> \n\
 	<classpathentry kind="src" path="src"/> \n\
-	<classpathentry kind="lib" path="jar/2DGame_1.2.jar"/> \n\
+	<classpathentry kind="lib" path="jar/2DGame_2.0.jar"/> \n\
 	<classpathentry kind="lib" path="libs/gluegen-rt.jar"> \n\
 		<attributes> \n\
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="'+game_name+'/libs"/> \n\
